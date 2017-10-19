@@ -218,8 +218,10 @@ def _find_ldap_user(login):
             else:
                 log.error("LDAP authentication method is not supported: {0}".format(config['ckanext.ldap.auth.method']))
                 return None
-        except ldap.SERVER_DOWN:
+        except ldap.SERVER_DOWN as:
             log.error('LDAP server is not reachable')
+            log.error(e)
+            log.error(config.get('ckanext.ldap.auth.dn'))
             return None
         except ldap.INVALID_CREDENTIALS:
             log.error('LDAP server credentials (ckanext.ldap.auth.dn and ckanext.ldap.auth.password) invalid')
@@ -260,8 +262,9 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
     """
     try:
         res = cnx.search_s(config['ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
-    except ldap.SERVER_DOWN:
+    except ldap.SERVER_DOWN as:
         log.error('LDAP server is not reachable')
+        log.error(e)
         return None
     except ldap.OPERATIONS_ERROR as e:
         log.error('LDAP query failed. Maybe you need auth credentials for performing searches? Error returned by the server: ' + e.info)
