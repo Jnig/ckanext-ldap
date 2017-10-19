@@ -218,7 +218,7 @@ def _find_ldap_user(login):
             else:
                 log.error("LDAP authentication method is not supported: {0}".format(config['ckanext.ldap.auth.method']))
                 return None
-        except ldap.SERVER_DOWN as:
+        except ldap.SERVER_DOWN as e:
             log.error('LDAP server is not reachable')
             log.error(e)
             log.error(config.get('ckanext.ldap.auth.dn'))
@@ -262,7 +262,7 @@ def _ldap_search(cnx, filter_str, attributes, non_unique='raise'):
     """
     try:
         res = cnx.search_s(config['ckanext.ldap.base_dn'], ldap.SCOPE_SUBTREE, filterstr=filter_str, attrlist=attributes)
-    except ldap.SERVER_DOWN as:
+    except ldap.SERVER_DOWN as e:
         log.error('LDAP server is not reachable')
         log.error(e)
         return None
